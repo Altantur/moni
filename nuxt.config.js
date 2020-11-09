@@ -39,6 +39,26 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    [
+        '@nuxtjs/firebase',
+        {
+          config: {
+              apiKey: "AIzaSyCgxqCi5p7YOA2-iQ6ljr9-WLYIQX0wGOw",
+              authDomain: "monnis-live.firebaseapp.com",
+              databaseURL: "https://monnis-live.firebaseio.com",
+              projectId: "monnis-live",
+              storageBucket: "monnis-live.appspot.com",
+              messagingSenderId: "1093738844133",
+              appId: "1:1093738844133:web:a6f6f0ebba4f6cb644290c",
+              measurementId: "G-BVM431HT8Z"
+          },
+          services: {
+              auth: true,
+              database: true,
+              functions: true,
+          }
+        }
+    ],
   ],
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
