@@ -16,10 +16,15 @@
 <script>
 export default {
     mounted: function() {
-      var temp = this.data.time;
+      let timeleft = 10
+      let temp = timeleft;
+      let LoC = 295.16 / timeleft;
       setInterval(() => {
-        document.getElementById("time-text").innerHTML = temp;
-        temp--;
+        if(temp >= 0) {
+          document.getElementById("time-text").innerHTML = temp;
+          document.getElementById("circle-of-timer").style.strokeDasharray = LoC * (temp - 1) + "," + LoC * (timeleft - temp + 1);
+          temp--;
+        }
       }, 1000);
     },
     props: {
