@@ -16,7 +16,11 @@
 <script>
 export default {
     mounted: function() {
-
+      var temp = this.data.time;
+      setInterval(() => {
+        document.getElementById("time-text").innerHTML = temp;
+        temp--;
+      }, 1000);
     },
     props: {
         data: Object
