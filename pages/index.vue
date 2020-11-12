@@ -49,6 +49,7 @@ export default {
 </script>
 
 <style>
+
 body, html {
   overflow: hidden;
   height: 100%;
@@ -63,7 +64,6 @@ body, html {
   left: calc(70% - 20px);
 }
 #box-container {
-  border-radius: 1px solid black;
   width: calc(72% + 5px);
   height: 100vh;
   background: lightgray;
@@ -89,5 +89,25 @@ body, html {
 .container {
   overflow: hidden;
   height: 100%;
+}
+@media only screen and (max-width: 400px) {
+  body {
+    overflow-y: auto;
+  }
+  #right-sidebar {
+    visibility: hidden;
+  }
+  #test-button {
+    visibility: hidden;
+  }
+  #box-container {
+    width: 100%;
+    border: none;
+  }
+  .boxes {
+    width: calc(100% - 5px);
+    height: fit-content;
+    margin-bottom: 2px;
+  }
 }
 </style>
