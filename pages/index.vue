@@ -1,11 +1,13 @@
 <template>
   <div class="container">
-    <ul id="box-container">
-      <li class="boxes" v-for="item in arr" :key="item">
-        <div><List :data="item"/></div>
-      </li>
-    </ul>
-    <div>
+    <div id="box-container">
+      <div class="boxes" v-for="item in arr" :key="item">
+        <div><List /></div>
+      </div>
+    </div>
+    <div id="right-sidebar">Here some commercial things like weather,time and adverstisements
+    </div>
+    <div id="test-button">
       <h1 class="title">
         {{message}}
       </h1>
@@ -21,29 +23,7 @@ export default {
     data () {
         return {
             message: "Loading...",
-            arr: {
-              data1: {
-                staff: "Bat",
-                car: "lx570",
-                id: "УБА0250",
-                time: 180,
-                comment: "qwer"
-                },
-              data2: {
-                staff: "Ochir",
-                car: "land200",
-                id: "УНА0250",
-                time: 120,
-                comment: "1"
-              },
-              data3: {
-                staff: "Ts",
-                car: "lx470",
-                id: "УБА0150",
-                time: 60,
-                comment: "2"
-              }
-            }
+            arr: [1, 2, 3, 4, 5, 6, 7, 8, 9]
       }
     },
     methods: {
@@ -69,10 +49,45 @@ export default {
 </script>
 
 <style>
+body, html {
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  background: lightgrey;
+}
+#right-sidebar {
+  width: 20%;
+  height: 100%;
+  position: absolute;
+  top: 0px;
+  left: calc(70% - 20px);
+}
 #box-container {
-  width: 70%;
+  border-radius: 1px solid black;
+  width: calc(72% + 5px);
+  height: 100vh;
+  background: lightgray;
+  padding-right: 5px;
+  border-right: 1px solid black;
 }
 .boxes {
   float: left;
+  background: white;
+  border-radius: 6px;
+  width: calc(33.3% - 5px);
+  height: calc(33.3% - 10px);
+  margin-left: 5px;
+  margin-top: 7px;
+}
+#test-button {
+  width: 50px;
+  left: calc(100% - 100px);
+  position: absolute;
+  top: 0;
+  float: left;
+}
+.container {
+  overflow: hidden;
+  height: 100%;
 }
 </style>
