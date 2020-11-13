@@ -1,15 +1,15 @@
 <template>
   <div id="container-box">
-    <div>Staff name here</div>
-    <div>Car model here</div>
-    <div>Id number of car here</div>
+    <div id="staff-name">Staff name here</div>
+    <div id="car-model" class="mg-l-10">LX570</div>
+    <div id="car-id" class="mg-l-10">УБА0000</div>
     <div id="timer-container">
       <svg class="timer-svg">
           <circle cx="40" cy="40" r="37" class="circle" id="circle-of-timer"></circle>
       </svg>
       <div id="time-text">Time</div>
     </div>
-    <div>Comments here</div>
+    <div id="comments" class="mg-l-10">Comments here</div>
   </div>
 </template>
 
@@ -34,12 +34,13 @@ export default {
 #container-box {
     width: 100%;
     display: flex;
-    align-items: center;
     flex-direction: column;
 }
 .timer-svg {
   width: 80px;
   height: 80px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 .circle {
   fill: white;
@@ -53,12 +54,27 @@ export default {
 #time-text {
   width: 80px;
   height: 80px;
-  margin-top: -80px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   font-family: sans-serif;
   font-weight: bold;
   font-size: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: -80px;
+}
+#staff-name {
+  position: relative;
+  font-weight: bold;
+  font-family: sans-serif;
+  margin-left: 5px;
+}
+#timer-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mg-l-10 {
+  margin-left: 10px;
 }
 </style>
