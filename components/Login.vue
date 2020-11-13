@@ -96,15 +96,12 @@ export default {
     methods: {
       async submit () {
         this.loading = true
-
         try {
           await this.$fire.auth.signInWithEmailAndPassword(
             this.username,
             this.password
-          )
-          this.loading = false
-          this.$router.push({
-            name: 'dashboard',
+          ).then(() => {
+              this.loading = false
           })
         } catch (e) {
           this.loading = false
@@ -112,6 +109,13 @@ export default {
         }
       },
     },
+    watch: {
+       authUser(val) {
+          if (val) {
+             this.$router.push('/dashboard')
+          }
+       }
+     }
 }
 </script>
 

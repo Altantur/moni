@@ -1,39 +1,54 @@
 <template>
-  <v-card class="overflow-hidden">
-    <v-app-bar
-      absolute
-      color="white"
-      elevate-on-scroll
-      scroll-target="#scrolling-techniques-7"
+    <v-toolbar
+      dark
+      dense
+      color="cyan"
     >
-      <v-app-bar-nav-icon></v-app-bar-nav-icon>
-
-      <v-toolbar-title>Title</v-toolbar-title>
+      <v-img
+        class="mx-2"
+        src="/logo.png"
+        max-height="40"
+        max-width="40"
+        contain
+      ></v-img>
+      <v-toolbar-title>Monnis</v-toolbar-title>
 
       <v-spacer></v-spacer>
 
-      <v-btn icon>
-        <v-icon>mdi-magnify</v-icon>
+      <v-btn icon class="mr-4" @click="logout">
+        Гарах
+        <v-icon>mdi-logout</v-icon>
       </v-btn>
-
-      <v-btn icon>
-        <v-icon>mdi-heart</v-icon>
-      </v-btn>
-
-      <v-btn icon>
-        <v-icon>mdi-dots-vertical</v-icon>
-      </v-btn>
-    </v-app-bar>
-    <v-sheet
-      id="scrolling-techniques-7"
-      class="overflow-y-auto"
-      max-height="600"
-    >
-      <v-container style="height: 1500px;">
-      </v-container>
-    </v-sheet>
-  </v-card>
+    </v-toolbar>
 </template>
+
+<script>
+import { mapState, mapGetters } from 'vuex'
+export default {
+    computed: {
+      ...mapState({
+        authUser: (state) => state.authUser,
+      }),
+      ...mapGetters({
+        isLoggedIn: 'isLoggedIn',
+      }),
+    },
+
+    methods: {
+        async logout () {
+            try {
+                await this.$fire.auth.signOut().then (() => {
+                    this.$router.push({
+                      name: 'login',
+                    })
+                })
+            } catch (e) {
+                alert(e)
+            }
+        },
+    },
+}
+</script>
 
 <style>
 </style>

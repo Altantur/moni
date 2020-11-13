@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="min-h-screen">
     Hello
     </div>
 </template>
@@ -30,6 +30,7 @@ export default {
         })
     },
     middleware: 'authenticated',
+    layout: 'dashboard',
 }
 </script>
 
