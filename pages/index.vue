@@ -5,7 +5,16 @@
         <div><List /></div>
       </div>
     </div>
-    <div id="right-sidebar">Here some commercial things like weather,time and adverstisements
+    <div id="right-sidebar">
+      <div id="weather-container">
+        <div id="months"></div>
+        <div id="current-time">Time</div>
+        <div id="sub-containerWT">
+          <div id="city-name"></div>
+          <div id="temp"></div>
+          <div id="states-of-day"></div>
+        </div>
+      </div>
     </div>
     <div id="test-button">
       <h1 class="title">
@@ -20,6 +29,7 @@
 
 <script>
 export default {
+  modules: ['@nuxtjs/axios'],
     data () {
         return {
             message: "Loading...",
@@ -27,6 +37,15 @@ export default {
       }
     },
     methods: {
+      numberConverter(nums) {
+        if(nums < 10) {
+          nums = "0" + nums;
+          return nums;
+        }
+        else {
+          return nums;
+        }
+      },
       async writeToRealtimeDb() {
           const messageRef = this.$fire.database.ref('message')
           try {
@@ -39,17 +58,53 @@ export default {
           }   
           alert('Success.')
       },
+      async fetchWeather() {
+        const elems = await this.$axios.$get('http://api.openweathermap.org/data/2.5/weather?q=Ulaanbaatar&APPID=454e0e864b03e71b886b41d8103e6faf');
+        var time = new Date();
+        switch (time.getDay()) {
+          case 1:
+            document.getElementById("months").innerHTML = "MON " + (time.getMonth() + 1) + "/" + time.getDate();   
+            break;
+          case 2:
+            document.getElementById("months").innerHTML = "TUE " + (time.getMonth() + 1) + "/" + time.getDate();
+            break;
+          case 3:
+            document.getElementById("months").innerHTML = "WED " + (time.getMonth() + 1) + "/" + time.getDate();
+            break;
+          case 4:
+            document.getElementById("months").innerHTML = "THU " + (time.getMonth() + 1) + "/" + time.getDate();
+            break;
+          case 5:
+            document.getElementById("months").innerHTML = "FRI " + (time.getMonth() + 1) + "/" + time.getDate();
+            break;
+          case 6:
+            document.getElementById("months").innerHTML = "SAT " + (time.getMonth() + 1) + "/" + time.getDate();
+            break;
+          case 7:
+            document.getElementById("months").innerHTML = "SUN " + (time.getMonth() + 1) + "/" + time.getDate();
+            break;
+        }
+          document.getElementById("current-time").innerHTML = this.numberConverter(time.getHours()) + ":" + this.numberConverter(time.getMinutes());
+          document.getElementById("city-name").innerHTML = elems.name;
+          document.getElementById("temp").innerHTML = Math.round(elems.main.temp - 273) + "°";
+          document.getElementById("states-of-day").innerHTML = elems.weather[0].description[0].toUpperCase() + elems.weather[0].description.slice(1);
+        setTimeout(() => {
+          this.fetchWeather();
+        }, 60000);
+      }
     },
     mounted () {
         this.$fire.database.ref('message').on('value', snapshot => {
             this.message = snapshot.val().message;
         })
+        this.fetchWeather();
     }
 }
 </script>
 
 <style>
-
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@200&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300&display=swap');
 body, html {
   overflow: hidden;
   height: 100%;
@@ -57,18 +112,16 @@ body, html {
   background: lightgrey;
 }
 #right-sidebar {
-  width: 20%;
+  width: calc(25% - 10px);
   height: 100%;
-  position: absolute;
-  top: 0px;
-  left: calc(70% - 20px);
+  left: calc(75% + 5px);
+  padding-top: 5px;
 }
 #box-container {
-  width: calc(72% + 5px);
+  width: calc(75% + 5px);
   height: 100vh;
   background: lightgray;
   padding-right: 5px;
-  border-right: 1px solid black;
 }
 .boxes {
   float: left;
@@ -83,12 +136,58 @@ body, html {
   width: 50px;
   left: calc(100% - 100px);
   position: absolute;
-  top: 0;
+  top: 400px;
   float: left;
 }
 .container {
   overflow: hidden;
+  width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: row;
+}
+#weather-container {
+  width: 100%;
+  height: fit-content;
+  background: white;
+  border-radius: 6px; 
+  display: flex;
+  align-items: center;
+  margin-top: 1px;
+  flex-direction: column;
+  padding-bottom: 5px;
+}
+#sub-containerWT {
+  display: flex;
+  flex-direction: row;
+}
+#months {
+  margin-top: 5px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: bold;
+  font-size: 16px;
+}
+#current-time {
+  font-size: 45px;
+  font-weight: bold;
+  margin-top: 16%;
+  margin-bottom: 16%;
+}
+#city-name {
+  font-family: 'Raleway', sans-serif;
+  font-weight: bold;
+  margin-right: 10px;
+  font-size: 16.5px;
+}
+#temp {
+  font-weight: bold;
+  font-size: 16px;
+  margin-right: 10px;
+}
+#states-of-day {
+  font-family: 'Raleway', sans-serif;
+  font-weight: bold;
+  font-size: 16.5px;
 }
 @media only screen and (max-width: 400px) {
   body {
@@ -96,12 +195,17 @@ body, html {
   }
   #right-sidebar {
     visibility: hidden;
+    width: 0;
   }
   #test-button {
     visibility: hidden;
   }
+  .container {
+    width: 100%;
+  }
   #box-container {
     width: 100%;
+    overflow-y: auto;
     border: none;
   }
   .boxes {
