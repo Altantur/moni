@@ -8,21 +8,16 @@
     <div id="right-sidebar">
       <div id="weather-container">
         <div id="months"></div>
-        <div id="current-time">Time</div>
+        <div id="current-time"></div>
         <div id="sub-containerWT">
           <div id="city-name"></div>
           <div id="temp"></div>
           <div id="states-of-day"></div>
         </div>
       </div>
-    </div>
-    <div id="test-button">
-      <h1 class="title">
-        {{message}}
-      </h1>
-      <button @click="writeToRealtimeDb">
-        Write to DB
-      </button>
+      <div id="ads-container">
+        <div id="plain-text">ADs will be placed here.</div>
+      </div>
     </div>
   </div>
 </template>
@@ -33,7 +28,8 @@ export default {
     data () {
         return {
             message: "Loading...",
-            arr: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+            arr: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+            scrollB: 0
       }
     },
     methods: {
@@ -61,29 +57,8 @@ export default {
       async fetchWeather() {
         const elems = await this.$axios.$get('http://api.openweathermap.org/data/2.5/weather?q=Ulaanbaatar&APPID=454e0e864b03e71b886b41d8103e6faf');
         var time = new Date();
-        switch (time.getDay()) {
-          case 1:
-            document.getElementById("months").innerHTML = "MON " + (time.getMonth() + 1) + "/" + time.getDate();   
-            break;
-          case 2:
-            document.getElementById("months").innerHTML = "TUE " + (time.getMonth() + 1) + "/" + time.getDate();
-            break;
-          case 3:
-            document.getElementById("months").innerHTML = "WED " + (time.getMonth() + 1) + "/" + time.getDate();
-            break;
-          case 4:
-            document.getElementById("months").innerHTML = "THU " + (time.getMonth() + 1) + "/" + time.getDate();
-            break;
-          case 5:
-            document.getElementById("months").innerHTML = "FRI " + (time.getMonth() + 1) + "/" + time.getDate();
-            break;
-          case 6:
-            document.getElementById("months").innerHTML = "SAT " + (time.getMonth() + 1) + "/" + time.getDate();
-            break;
-          case 7:
-            document.getElementById("months").innerHTML = "SUN " + (time.getMonth() + 1) + "/" + time.getDate();
-            break;
-        }
+        var days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+        document.getElementById("months").innerHTML = days[time.getDay()] + " " + (time.getMonth() + 1) + "/" + time.getDate();
           document.getElementById("current-time").innerHTML = this.numberConverter(time.getHours()) + ":" + this.numberConverter(time.getMinutes());
           document.getElementById("city-name").innerHTML = elems.name;
           document.getElementById("temp").innerHTML = Math.round(elems.main.temp - 273) + "°";
@@ -91,6 +66,21 @@ export default {
         setTimeout(() => {
           this.fetchWeather();
         }, 60000);
+      },
+      scroller() {
+        if(this.arr.length > 6) {
+                if(this.scrollB == 0) {
+                  document.getElementById("box-container").scrollTop = document.getElementById("box-container").scrollHeight;
+                  this.scrollB = 1;
+                }
+                else {
+                  document.getElementById("box-container").scrollTo(0, 0);
+                  this.scrollB = 0;
+                }
+              setTimeout(() => {
+                this.scroller();
+              }, 20000);
+            }
       }
     },
     mounted () {
@@ -98,6 +88,7 @@ export default {
             this.message = snapshot.val().message;
         })
         this.fetchWeather();
+          this.scroller();
     }
 }
 </script>
@@ -106,40 +97,63 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@200&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300&display=swap');
 body, html {
+  background: url('bg1.jpg');
+  background-attachment: fixed;
+  background-size: cover;
   overflow: hidden;
   height: 100%;
   width: 100%;
-  background: lightgrey;
 }
 #right-sidebar {
+  color: white;
   width: calc(25% - 10px);
-  height: 100%;
+  height: 100vh;
   left: calc(75% + 5px);
-  padding-top: 5px;
+  padding-top: 7px;
+  display: flex;
+  flex-direction: column;
+}
+#ads-container {
+  margin-top: 5px;
+  width: 100%;
+  height: calc(60% - 15px);
+  border-radius: 6px;
+  background: transparent;
+  border: 1px solid white;
+}
+#plain-text {
+  width: calc(100% - 5px);
+  margin-left: 5px;
+  margin-top: 5px;
 }
 #box-container {
   width: calc(75% + 5px);
   height: 100vh;
-  background: lightgray;
+  background: transparent;
   padding-right: 5px;
+  overflow-y: scroll;
+  padding-bottom: 10px;
+  scroll-behavior: smooth;
+}
+#box-container::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
 }
 .boxes {
+  backdrop-filter: blur(5px);
+  box-shadow: 1.1px 1.1px 3px 0.5px wheat;
+  color: white;
   float: left;
-  background: white;
+  background: transparent;
   border-radius: 6px;
   width: calc(33.3% - 5px);
-  height: calc(33.3% - 10px);
+  height: calc(50% - 6px);
   margin-left: 5px;
   margin-top: 7px;
-}
-#test-button {
-  width: 50px;
-  left: calc(100% - 100px);
-  position: absolute;
-  top: 400px;
-  float: left;
+  margin-bottom: 1px;
 }
 .container {
+  min-width: 100%;
   overflow: hidden;
   width: 100%;
   height: 100%;
@@ -148,14 +162,15 @@ body, html {
 }
 #weather-container {
   width: 100%;
-  height: fit-content;
-  background: white;
+  height: 40%;
+  background: transparent;
   border-radius: 6px; 
   display: flex;
   align-items: center;
   margin-top: 1px;
   flex-direction: column;
   padding-bottom: 5px;
+  border: 1px solid white;
 }
 #sub-containerWT {
   display: flex;
@@ -170,19 +185,19 @@ body, html {
 #current-time {
   font-size: 45px;
   font-weight: bold;
-  margin-top: 16%;
-  margin-bottom: 16%;
+  margin-top: 19%;
+  margin-bottom: 19%;
 }
 #city-name {
   font-family: 'Raleway', sans-serif;
   font-weight: bold;
-  margin-right: 10px;
+  margin-right: 15px;
   font-size: 16.5px;
 }
 #temp {
   font-weight: bold;
   font-size: 16px;
-  margin-right: 10px;
+  margin-right: 15px;
 }
 #states-of-day {
   font-family: 'Raleway', sans-serif;
