@@ -1,6 +1,9 @@
 <template>
   <div id="container-box">
-    <div id="staff-name">Staff name here</div>
+    <div id="staff-prof-container">
+      <div id="icon-of-staff">Icon</div>
+      <div id="staff-name">Staff name here</div>
+    </div>
     <div id="car-model" class="mg-l-10">LX570</div>
     <div id="car-id" class="mg-l-10">УБА0000</div>
     <div id="timer-container">
@@ -36,16 +39,33 @@ export default {
     display: flex;
     flex-direction: column;
 }
+#staff-prof-container {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+#icon-of-staff {
+  width: 25px;
+  height: 25px;
+  border: 1px solid white;
+  margin-top: 5px;
+  margin-left: 10px;
+  font-size: 10px;
+  font-weight: bold;
+  text-align: center;
+}
 .timer-svg {
   width: 80px;
   height: 80px;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 .circle {
-  fill: white;
+  fill: transparent;
   stroke-width: 3px;
-  stroke: navy;
+  stroke: white;
   stroke-dasharray: 232.58, 0;
   transform: rotate(-90deg);
   transform-origin: center;
