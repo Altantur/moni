@@ -170,9 +170,10 @@
 </template>
 
 <script>
+import { mapState, mapGetters } from 'vuex'
 export default {
     layout: 'dashboard',
-    middleware: 'authenticated',
+    middleware: ['authenticated', 'authorized'],
     data: () => ({
       dialog: false,
       dialogDelete: false,
@@ -208,6 +209,12 @@ export default {
     }),
 
     computed: {
+      ...mapState({
+        authUser: (state) => state.authUser,
+      }),
+      ...mapGetters({
+        isLoggedIn: 'isLoggedIn',
+      }),
       formTitle () {
         return this.editedIndex === -1 ? 'Шинэ ажилтан нэмэх' : 'Засах'
       },
@@ -224,9 +231,21 @@ export default {
 
     created () {
       this.initialize()
+      this.initialize_beta()
     },
 
     methods: {
+      async initialize_beta () {
+        this.loading = true
+        try {
+          const res = await this.$fire.functions.httpsCallable('getUsers')()
+          console.log(res.data)
+        } catch (e) {
+          alert(e)
+        } finally {
+          this.loading = false
+        }
+      },
       initialize () {
         this.desserts = [
           {

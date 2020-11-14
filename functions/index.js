@@ -5,7 +5,7 @@ admin.initializeApp({
   credential: admin.credential.applicationDefault(),
 });
 
-function listAllUsers(nextPageToken, callback) {
+const listAllUsers = (callback) => {
   // List batch of users, 1000 at a time.
   admin.auth().listUsers(1000, undefined)
   .then((listUsersResult) => {
@@ -20,9 +20,32 @@ function listAllUsers(nextPageToken, callback) {
   });
 }
 
-exports.getUsers = functions.https.onRequest((request, response) => {
-  listAllUsers(null, (list) => {
-      response.send(list);
+const setAdmin = (uid) => {
+  admin.auth().setCustomUserClaims(uid, {admin: true}).then(() => {
+    return true;
+  }).catch((error) => {
+    return false;
+  });
+}
+
+exports.toAdmin = functions.https.onRequest((req, res) => {
+  const list = { is: true};
+  setAdmin('rBkuww9mMpYum0REAOcI4qtmWc93');
+  res.send(list);
+});
+
+exports.getUsers = functions.https.onCall((data, context) => {
+  return new Promise((resolve) => {
+    listAllUsers((list) => {
+      if (!context.auth) {
+        resolve( { message: 'Authentication Required!', code: 401 });
+      }
+
+      if (!context.auth.token.admin) {
+        resolve( { message: 'Permission denied!', code: 401 });
+      }
+      resolve(list);
+    });
   });
 });
 

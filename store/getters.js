@@ -5,5 +5,12 @@ export default {
           } catch {
             return false
         }
+    },
+    isAdmin: (state) => {
+        try {
+            return state.claims.admin
+          } catch {
+            return false
+        }
     }
 }

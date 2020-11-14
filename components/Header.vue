@@ -29,7 +29,7 @@
       </v-list-item>
     </div>
     <v-spacer />
-    <div>
+    <div v-show="claims.admin">
       <v-list-item
         to="/users"
         append
@@ -47,7 +47,7 @@
       </v-list-item>
     </div>
     <v-spacer />
-    <div>
+    <div v-show="claims.admin">
       <v-list-item
         to="/report"
         append
@@ -77,7 +77,7 @@
         </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title>
-            Гарах
+            Гарах 
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
@@ -94,6 +94,7 @@ export default {
     computed: {
       ...mapState({
         authUser: (state) => state.authUser,
+        claims: (state) => state.claims,
       }),
       ...mapGetters({
         isLoggedIn: 'isLoggedIn',

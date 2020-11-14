@@ -31,6 +31,8 @@
 
 <script>
 export default {
+    layout: 'dashboard',
+    middleware: ['authenticated', 'authorized'],
     data () {
         return {
       }
@@ -49,13 +51,6 @@ export default {
           alert('Success.')
       },
     },
-    mounted () {
-        this.$fire.database.ref('message').on('value', snapshot => {
-            this.message = snapshot.val().message;
-        })
-    },
-    middleware: 'authenticated',
-    layout: 'dashboard',
 }
 </script>
 

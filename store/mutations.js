@@ -5,10 +5,11 @@ export default {
     Object.assign(state, initialState())
   },
 
-  SET_AUTH_USER: (state, { authUser }) => {
+  SET_AUTH_USER: (state, { authUser, claims }) => {
     state.authUser = {
       uid: authUser.uid,
       email: authUser.email
     }
+    state.claims = claims
   }
 }

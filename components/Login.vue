@@ -1,81 +1,73 @@
 <template>
   <v-app class="flex justify-center items-center h-screen w-screen flex-col">
-      <v-form @submit.prevent="submit">
-        <v-container>
-          <v-img
-            lazy-src="/monnis.jpg"
-            max-height="150"
-            max-width="250"
-            src="/monnis.jpg"
-            class="mb-4"
-          ></v-img>
-          <v-row>
-              <v-text-field
-                v-model="username"
-                label="Е-мэйл"
-                :rules="emailrules"
-                filled
-              ></v-text-field>
-          </v-row>
-          <v-row>
-              <v-text-field
-                v-model="password"
-                label="Нууц үг"
-                :rules="passrules"
-                filled
-                :type="'password'"
-              ></v-text-field>
-          </v-row>
-        </v-container>
-        <v-btn
-          class="text-black"
-          :loading="loading"
-          :disabled="loading"
-          large
-          type="submit"
-        >
-          Нэвтрэх
-          <template v-slot:loader>
-            <span class="custom-loader">
-              <v-icon light>mdi-cached</v-icon>
-            </span>
-          </template>
-        </v-btn>
-      </v-form>
-      <v-dialog
-        v-model="error_msg"
-        max-width="290"
+    <v-form @submit.prevent="submit">
+      <v-container>
+        <v-img
+          lazy-src="/monnis.jpg"
+          max-height="150"
+          max-width="250"
+          src="/monnis.jpg"
+          class="mb-4"
+        />
+        <v-row>
+          <v-text-field
+            v-model="username"
+            label="Е-мэйл"
+            :rules="emailrules"
+            filled
+          />
+        </v-row>
+        <v-row>
+          <v-text-field
+            v-model="password"
+            label="Нууц үг"
+            :rules="passrules"
+            filled
+            :type="'password'"
+          />
+        </v-row>
+      </v-container>
+      <v-btn
+        class="text-black"
+        :loading="loading"
+        :disabled="loading"
+        large
+        type="submit"
       >
-        <v-card>
-          <v-card-text class="pt-4">
-            Е-мэйл эсвэл нууц үг буруу байна.
-          </v-card-text>
+        Нэвтрэх
+        <template #loader>
+          <span class="custom-loader">
+            <v-icon light>mdi-cached</v-icon>
+          </span>
+        </template>
+      </v-btn>
+    </v-form>
+    <v-dialog
+      v-model="error_msg"
+      max-width="290"
+    >
+      <v-card>
+        <v-card-text class="pt-4">
+          Е-мэйл эсвэл нууц үг буруу байна.
+        </v-card-text>
 
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn
-              color="green darken-1"
-              text
-              @click="error_msg = false"
-            >
-              Хаах
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            color="green darken-1"
+            text
+            @click="error_msg = false"
+          >
+            Хаах
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 <script>
 import { mapState, mapGetters } from 'vuex'
 export default {
-    computed: {
-      ...mapState({
-        authUser: (state) => state.authUser,
-      }),
-      ...mapGetters({
-        isLoggedIn: 'isLoggedIn',
-      }),
-    },
     data () {
       return {
          emailrules: [
@@ -93,6 +85,21 @@ export default {
          error_msg: false,
       }
     },
+    computed: {
+      ...mapState({
+        authUser: (state) => state.authUser,
+      }),
+      ...mapGetters({
+        isLoggedIn: 'isLoggedIn',
+      }),
+    },
+    watch: {
+       authUser(val) {
+          if (val) {
+             this.$router.push('/dashboard')
+          }
+       }
+     },
     methods: {
       async submit () {
         this.loading = true
@@ -108,14 +115,7 @@ export default {
           this.error_msg = true
         }
       },
-    },
-    watch: {
-       authUser(val) {
-          if (val) {
-             this.$router.push('/dashboard')
-          }
-       }
-     }
+    }
 }
 </script>
 
