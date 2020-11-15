@@ -62,6 +62,7 @@ export default {
               },
               database: true,
               functions: true,
+              storage: true,
           }
         }
     ],

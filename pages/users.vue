@@ -2,8 +2,10 @@
   <div class="min-h-screen">
     <v-data-table
       :headers="headers"
-      :items="desserts"
+      :items="users"
       class="elevation-1"
+      :loading="loading"
+      loading-text="Уншиж байна... Түр хүлээнэ үү"
     >
       <template #top>
         <v-toolbar
@@ -45,8 +47,8 @@
                       md="4"
                     >
                       <v-text-field
-                        v-model="editedItem.name"
-                        label="Dessert name"
+                        v-model="editedItem.displayName"
+                        label="Нэр"
                       />
                     </v-col>
                     <v-col
@@ -55,8 +57,8 @@
                       md="4"
                     >
                       <v-text-field
-                        v-model="editedItem.calories"
-                        label="Calories"
+                        v-model="editedItem.email"
+                        label="Е-мэйл"
                       />
                     </v-col>
                     <v-col
@@ -65,8 +67,46 @@
                       md="4"
                     >
                       <v-text-field
-                        v-model="editedItem.fat"
-                        label="Fat (g)"
+                        v-model="editedItem.phoneNumber"
+                        label="Утас(976)"
+                      />
+                    </v-col>
+                    <v-col
+                      cols="12"
+                      sm="6"
+                      md="4"
+                    >
+                      <v-combobox
+                        v-model="editedItem.role"
+                        :items="roles"
+                        label="Хэрэглэгчийн төрөл"
+                      />
+                    </v-col>
+                    <v-col
+                      cols="12"
+                      sm="6"
+                      md="4"
+                    >
+                      <v-img
+                        class="mx-2"
+                        :src="editedItem.url ? editedItem.url : '/default_user.png'"
+                        max-height="200"
+                        max-width="100"
+                        contain
+                      />
+                    </v-col>
+                    <v-col
+                      cols="12"
+                      sm="6"
+                      md="4"
+                    >
+                      <v-file-input
+                        v-model="editedItem.photoURL"
+                        accept="image/*"
+                        truncate-length="15"
+                        label="Зураг оруулах"
+                        prepend-icon="mdi-account"
+                        @change="onFileChange"
                       />
                     </v-col>
                     <v-col
@@ -75,18 +115,9 @@
                       md="4"
                     >
                       <v-text-field
-                        v-model="editedItem.carbs"
-                        label="Carbs (g)"
-                      />
-                    </v-col>
-                    <v-col
-                      cols="12"
-                      sm="6"
-                      md="4"
-                    >
-                      <v-text-field
-                        v-model="editedItem.protein"
-                        label="Protein (g)"
+                        v-model="editedItem.password"
+                        type="password"
+                        label="Нууц үг"
                       />
                     </v-col>
                   </v-row>
@@ -142,6 +173,15 @@
           </v-dialog>
         </v-toolbar>
       </template>
+      <template #[`item.url`]="{ item }">
+        <v-img
+          class="mx-2"
+          :src="item.url ? item.url : '/default_user.png'"
+          max-height="40"
+          max-width="40"
+          contain
+        />
+      </template>
       <template #[`item.actions`]="{ item }">
         <v-icon
           small
@@ -157,14 +197,6 @@
           mdi-delete
         </v-icon>
       </template>
-      <template #no-data>
-        <v-btn
-          color="primary"
-          @click="initialize"
-        >
-          Reset
-        </v-btn>
-      </template>
     </v-data-table>
   </div>
 </template>
@@ -176,38 +208,64 @@ export default {
     middleware: ['authenticated', 'authorized'],
     data: () => ({
       dialog: false,
+      loading: true,
       dialogDelete: false,
       headers: [
-        {
-          text: 'Нэр',
+        { text: 'Зураг', 
           align: 'start',
           sortable: false,
-          value: 'name',
+          value: 'url' 
+          },
+        {
+          text: 'Нэр',
+          sortable: false,
+          value: 'displayName',
         },
-        { text: 'Calories', value: 'calories' },
-        { text: 'Fat (g)', value: 'fat' },
-        { text: 'Carbs (g)', value: 'carbs' },
-        { text: 'Protein (g)', value: 'protein' },
+        {
+          text: 'Е-мэйл',
+          sortable: false,
+          value: 'email',
+        },
+        {
+          text: 'Утас',
+          sortable: false,
+          value: 'phoneNumber',
+        },
+        {
+          text: 'Хэрэглэгчийн төрөл',
+          sortable: true,
+          value: 'role',
+        },
         { text: 'Үйлдлүүд', value: 'actions', sortable: false },
       ],
-      desserts: [],
+      users: [],
       editedIndex: -1,
       editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        displayName: '',
+        email: '',
+        role: '',
+        photoURL: null,
+        phoneNumber: '',
+        password: '',
+        url: '',
+        uid: '',
       },
       defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        displayName: '',
+        email: '',
+        role: '',
+        photoURL: null,
+        phoneNumber: '',
+        password: '',
+        url: '',
+        uid: '',
       },
+      roles: [
+        'Админ',
+        'Үйлчилгээний зөвлөх',
+        'Засварчин',
+      ],
     }),
-
     computed: {
       ...mapState({
         authUser: (state) => state.authUser,
@@ -231,48 +289,28 @@ export default {
 
     created () {
       this.initialize()
-      this.initialize_beta()
     },
 
     methods: {
-      async initialize_beta () {
-        this.loading = true
-        try {
-          const res = await this.$fire.functions.httpsCallable('getUsers')()
-          console.log(res.data)
-        } catch (e) {
-          alert(e)
-        } finally {
-          this.loading = false
-        }
-      },
       initialize () {
-        this.desserts = [
-          {
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-          },
-        ]
+        this.loading = true
+        const ref = this.$fire.database.ref('users')
+        ref.on('value', (data) => {
+          if (data.val())
+          this.users = Object.values(data.val())
+          this.loading = false
+        });
       },
 
       editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
+        this.editedIndex = this.users.indexOf(item)
         this.editedItem = Object.assign({}, item)
+        console.log(item);
         this.dialog = true
       },
 
       deleteItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
+        this.editedIndex = this.users.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialogDelete = true
       },
@@ -298,14 +336,44 @@ export default {
         })
       },
 
-      save () {
+      saveToDB (url) {
+        this.editedItem.url = url
+        const saveUser = this.$fire.functions.httpsCallable('save')
+        saveUser(this.editedItem).then((result) => {
+          console.log('Success',result);
+          this.loading = false;
+        }).catch((error) => {
+          console.log(error)
+          this.loading = false;
+        });
         if (this.editedIndex > -1) {
-          Object.assign(this.desserts[this.editedIndex], this.editedItem)
+          Object.assign(this.users[this.editedIndex], this.editedItem)
         } else {
-          this.desserts.push(this.editedItem)
+          this.users.push(this.editedItem)
         }
         this.close()
       },
+
+      save () {
+        this.loading = true;
+        if (this.editedItem.photoURL) {
+          const ref = this.$fire.storage.ref().child(this.editedItem.email + '/' + this.editedItem.photoURL.name)
+          ref.put(this.editedItem.photoURL).then((snapshot) => {
+            ref.getDownloadURL().then((url) => {
+              this.saveToDB (url)
+            }).catch((error) => {
+              console.log(error)
+              this.loading = false;
+            });
+          });
+        } else {
+          this.saveToDB(null);
+        }
+      },
+      onFileChange() {
+        const file = this.editedItem.photoURL
+        this.editedItem.url = URL.createObjectURL(file)
+      }
     },
 }
 </script>

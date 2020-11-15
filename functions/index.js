@@ -3,22 +3,8 @@ const admin = require('firebase-admin');
 
 admin.initializeApp({
   credential: admin.credential.applicationDefault(),
+  databaseURL: "https://monnis-live.firebaseio.com"
 });
-
-const listAllUsers = (callback) => {
-  // List batch of users, 1000 at a time.
-  admin.auth().listUsers(1000, undefined)
-  .then((listUsersResult) => {
-      /*if (listUsersResult.pageToken) {
-        listAllUsers(listUsersResult.pageToken, callback);
-      }*/
-      callback(listUsersResult);
-      return listUsersResult;
-    })
-  .catch((error) => {
-      console.log('Error listing users:', error);
-  });
-}
 
 const setAdmin = (uid) => {
   admin.auth().setCustomUserClaims(uid, {admin: true}).then(() => {
@@ -28,25 +14,83 @@ const setAdmin = (uid) => {
   });
 }
 
+const writeToDB = (user, uid, update) => {
+  const db = admin.database();
+  const ref = db.ref("users");
+  delete user["password"];
+  user.uid = uid;
+  var record = {};
+  update ? ref.child(uid).update(user) : ref.child(uid).set(user);
+  return record;
+}
+
+const saveUser = (user) => {
+  const userToBe = {
+    email: user.email,
+    emailVerified: true,
+    phoneNumber: "+976" + user.phoneNumber,
+    password: user.password,
+    displayName: user.displayName,
+    disabled: false
+  };
+  if (user.uid) {
+    admin.auth().updateUser(user.uid, userToBe)
+    .then((userRecord) => {
+      return writeToDB(user, userRecord.uid, true);
+    })
+    .catch((error) => {
+      console.log('Error updating user:', error);
+    });
+  } else {
+    admin.auth().createUser(userToBe)
+    .then((userRecord) => {
+      return writeToDB(user, userRecord.uid, false);
+    })
+    .catch((error) => {
+      console.log('Error creating new user:', error);
+    });
+  }
+}
+
+exports.save = functions.https.onCall((data, context) => {
+    if (!context.auth) {
+      return { message: 'Authentication Required!', code: 401 };
+    }
+    if (!context.auth.token.admin) {
+      return { message: 'Permission denied!', code: 401 };
+    }
+    saveUser(data, (user) => {
+      return { message: user, code: 200 };
+    });
+    return { message: "Success", code: 200 };
+});
+
+exports.deleteUser = functions.https.onCall((data, context) => {
+    if (!context.auth) {
+      return { message: 'Authentication Required!', code: 401 };
+    }
+    if (!context.auth.token.admin) {
+      return { message: 'Permission denied!', code: 401 };
+    }
+
+    admin.auth().deleteUser(data.uid)
+    .then(() => {
+      console.log('Successfully deleted user');
+      return { message: "Success", code: 200 };
+    })
+    .catch((error) => {
+      console.log('Error deleting user:', error);
+    });
+    createUser(data, (user) => {
+    });
+    return { message: "Success", code: 200 };
+});
+
+
 exports.toAdmin = functions.https.onRequest((req, res) => {
   const list = { is: true};
   setAdmin('rBkuww9mMpYum0REAOcI4qtmWc93');
   res.send(list);
-});
-
-exports.getUsers = functions.https.onCall((data, context) => {
-  return new Promise((resolve) => {
-    listAllUsers((list) => {
-      if (!context.auth) {
-        resolve( { message: 'Authentication Required!', code: 401 });
-      }
-
-      if (!context.auth.token.admin) {
-        resolve( { message: 'Permission denied!', code: 401 });
-      }
-      resolve(list);
-    });
-  });
 });
 
 exports.scheduledFunction = functions.pubsub.schedule('every 1 minutes').onRun((context) => {
