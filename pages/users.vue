@@ -316,7 +316,16 @@ export default {
       },
 
       deleteItemConfirm () {
-        this.desserts.splice(this.editedIndex, 1)
+        this.loading = true;
+        const delUser = this.$fire.functions.httpsCallable('deleteUser')
+        delUser(this.editedItem).then((result) => {
+          this.users.splice(this.editedIndex, 1)
+          console.log('Success',result);
+          this.loading = false;
+        }).catch((error) => {
+          console.log(error)
+          this.loading = false;
+        });
         this.closeDelete()
       },
 

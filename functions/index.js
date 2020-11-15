@@ -81,8 +81,6 @@ exports.deleteUser = functions.https.onCall((data, context) => {
     .catch((error) => {
       console.log('Error deleting user:', error);
     });
-    createUser(data, (user) => {
-    });
     return { message: "Success", code: 200 };
 });
 
