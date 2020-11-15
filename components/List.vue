@@ -8,7 +8,7 @@
     <div id="car-id" class="mg-l-10">УБА0000</div>
     <div id="timer-container">
       <svg class="timer-svg">
-          <circle cx="40" cy="40" r="37" class="circle" id="circle-of-timer"></circle>
+          <circle cx="50" cy="50" r="47" class="circle" id="circle-of-timer"></circle>
       </svg>
       <div id="time-text">Time</div>
     </div>
@@ -49,7 +49,7 @@ export default {
 #icon-of-staff {
   width: 25px;
   height: 25px;
-  border: 1px solid white;
+  border: 1px solid black;
   margin-top: 5px;
   margin-left: 10px;
   font-size: 10px;
@@ -57,30 +57,34 @@ export default {
   text-align: center;
 }
 .timer-svg {
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   margin-top: 5px;
   margin-bottom: 5px;
 }
 .circle {
   fill: transparent;
   stroke-width: 3px;
-  stroke: white;
-  stroke-dasharray: 232.58, 0;
+  stroke: black;
+  stroke-dasharray: 295.16, 0;
   transform: rotate(-90deg);
   transform-origin: center;
   transition: 1s all linear;
 }
+.circle:hover {
+  stroke-dasharray: 0, 295.16;
+}
 #time-text {
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
+  transform: scale(0.6);
   font-family: sans-serif;
   font-weight: bold;
-  font-size: 12px;
+  font-size: 25px;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-left: -80px;
+  margin-left: -100px;
 }
 #staff-name {
   position: relative;
