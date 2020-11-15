@@ -97,7 +97,7 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@200&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300&display=swap');
 body, html {
-  background: url('bg1.jpg');
+  background: lightgray;
   background-attachment: fixed;
   background-size: cover;
   overflow: hidden;
@@ -105,7 +105,7 @@ body, html {
   width: 100%;
 }
 #right-sidebar {
-  color: white;
+  color: black;
   width: calc(25% - 10px);
   height: 100vh;
   left: calc(75% + 5px);
@@ -118,8 +118,7 @@ body, html {
   width: 100%;
   height: calc(60% - 15px);
   border-radius: 6px;
-  background: transparent;
-  border: 1px solid white;
+  background: white;
 }
 #plain-text {
   width: calc(100% - 5px);
@@ -129,7 +128,7 @@ body, html {
 #box-container {
   width: calc(75% + 5px);
   height: 100vh;
-  background: transparent;
+  background: lightgray;
   padding-right: 5px;
   overflow-y: scroll;
   padding-bottom: 10px;
@@ -141,16 +140,14 @@ body, html {
 }
 .boxes {
   backdrop-filter: blur(5px);
-  box-shadow: 1.1px 1.1px 3px 0.5px wheat;
-  color: white;
+  color: black;
   float: left;
-  background: transparent;
+  background: white;
   border-radius: 6px;
   width: calc(33.3% - 5px);
-  height: calc(50% - 6px);
+  height: calc(50% - 5px);
   margin-left: 5px;
   margin-top: 7px;
-  margin-bottom: 1px;
 }
 .container {
   min-width: 100%;
@@ -163,14 +160,13 @@ body, html {
 #weather-container {
   width: 100%;
   height: 40%;
-  background: transparent;
+  background: white;
   border-radius: 6px; 
   display: flex;
   align-items: center;
   margin-top: 1px;
   flex-direction: column;
   padding-bottom: 5px;
-  border: 1px solid white;
 }
 #sub-containerWT {
   display: flex;
