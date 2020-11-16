@@ -14,11 +14,21 @@ const setAdmin = (uid) => {
   });
 }
 
+const setStaff = (uid) => {
+  admin.auth().setCustomUserClaims(uid, {staff: true}).then(() => {
+    return true;
+  }).catch((error) => {
+    return false;
+  });
+}
+
 const writeToDB = (user, uid, update) => {
   const db = admin.database();
   const ref = db.ref("users");
   if (user.role === "Админ")
     setAdmin(uid);
+  if (user.role === "Үйлчилгээний зөвлөх")
+    setStaff(uid);
   delete user["password"];
   user.uid = uid;
   var record = {};
