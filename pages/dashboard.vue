@@ -10,18 +10,15 @@
       <div>
         <v-list-item
           append
-          dark
         >
-          <v-list-item-icon>
+          <v-btn 
+            @click="create"
+          >
             <v-icon>
               mdi-plus
             </v-icon>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <v-list-item-title>
-              Захиалга нэмэх
-            </v-list-item-title>
-          </v-list-item-content>
+            Захиалга нэмэх
+          </v-btn>
         </v-list-item>
       </div>
     </v-toolbar>
@@ -91,6 +88,9 @@ export default {
         })
     },
     methods: {
+      create () {
+        alert()
+      },
       async writeToRealtimeDb() {
           const messageRef = this.$fire.database.ref('message')
           try {
