@@ -29,6 +29,7 @@
         :width="25"
         :value="repair.value"
         :color="color"
+        class="text-4xl"
       >
         {{ repair.text }}
       </v-progress-circular>
@@ -37,6 +38,7 @@
       block 
       depressed
       x-large
+      class="text-4xl"
     >
       {{ repair.veNumber }}
     </v-btn>
@@ -119,5 +121,8 @@ import { mapState, mapGetters } from 'vuex'
 <style scoped>
 .v-progress-circular {
   margin: 1rem;
+}
+.text-4xl {
+  font-size: 2.25rem !important;
 }
 </style>
