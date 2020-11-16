@@ -1,14 +1,14 @@
 <template>
     <div id="box-container">
         <div id="header-container">
-            <h1 class="h-one">Munkhjargal</h1>&nbsp;
-            <div class="g-color h-one">LX570</div>
+            <h1 class="h-one">{{name}}</h1>&nbsp;
+            <div class="g-color h-one">{{model}}</div>
         </div>
         <div id="status-container">
             <div class="l-side">
                 <h3 class="h-three">Status</h3>
                 <div class="d-flex">
-                    <div id="status-box">{{status}}</div>
+                    <div class="status-box">{{status}}</div>
                     <div id="ordered-time">Захиалага авсан цаг {{time}}</div>
                 </div>
                 </div>
@@ -26,10 +26,17 @@
 export default {
     data() {
         return {
-            status: "Waiting",
-            time: "12:07",
-            id: "УБА0000"
+            status: this.data.status,
+            time: this.data.time,
+            id: "УБА0000",
+            model: this.data.model,
+            name: this.data.name,
+            triggered: 0
         }
+    },
+    props: {
+        data: Object,
+        active: Array
     }
 }
 </script>
@@ -70,13 +77,13 @@ export default {
     font-family: 'Hind Siliguri', sans-serif;
     margin-bottom: 5px;
 }
-#status-box {
+.status-box {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 70px;
+    width: 80px;
     height: 25px;
-    border: 1px solid rgba(8, 135, 94, 0.6);
+    border: 1px solid rgba(8, 135, 94, 0.8);
     border-radius: 4px;
     font-family: 'Hind Siliguri', sans-serif;
     font-size: 14px;
