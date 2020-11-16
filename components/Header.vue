@@ -3,13 +3,17 @@
     dark
     class="d-flex flex-column justify-space-between"
   >
-    <v-img
-      class="mx-2"
-      src="/logo.png"
-      max-height="40"
-      max-width="40"
-      contain
-    />
+    <div>
+      <v-list-item
+        append
+      >
+        <v-list-item-content>
+          <v-list-item-title>
+            Сайн уу {{ authUser.displayName }}
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </div>
     <v-spacer />
     <div>
       <v-list-item
@@ -102,17 +106,17 @@ export default {
     },
 
     methods: {
-        async logout () {
-            try {
-                await this.$fire.auth.signOut().then (() => {
-                    this.$router.push({
-                      name: 'login',
-                    })
-                })
-            } catch (e) {
-                alert(e)
-            }
-        },
+      async logout () {
+        try {
+          await this.$fire.auth.signOut().then (() => {
+            this.$router.push({
+              name: 'login',
+            })
+          })
+        } catch (e) {
+          alert(e)
+        }
+      },
     },
 }
 </script>
