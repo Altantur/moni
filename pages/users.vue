@@ -346,7 +346,7 @@ export default {
       },
 
       saveToDB (url) {
-        this.editedItem.url = url
+        if (url) this.editedItem.url = url
         const saveUser = this.$fire.functions.httpsCallable('save')
         saveUser(this.editedItem).then((result) => {
           console.log('Success',result);
