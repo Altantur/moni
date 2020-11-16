@@ -17,6 +17,8 @@ const setAdmin = (uid) => {
 const writeToDB = (user, uid, update) => {
   const db = admin.database();
   const ref = db.ref("users");
+  if (user.role === "Админ")
+    setAdmin(uid);
   delete user["password"];
   user.uid = uid;
   var record = {};
@@ -73,8 +75,11 @@ exports.deleteUser = functions.https.onCall((data, context) => {
       return { message: 'Permission denied!', code: 401 };
     }
 
+    const db = admin.database();
     admin.auth().deleteUser(data.uid)
     .then(() => {
+      const ref = db.ref("users/" + data.uid);
+      ref.remove();
       console.log('Successfully deleted user');
       return { message: "Success", code: 200 };
     })
