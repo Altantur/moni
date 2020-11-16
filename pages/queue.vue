@@ -7,11 +7,18 @@
         <div id="body-container">
             <h1 class="h-one">Queue</h1>
             <div id="list-container">
-                <h2 class="h-two">Active</h2>
+                <h2 class="h-two">On hold</h2>
                 <div v-for="item in object" :key="item">
                     <Qlist class="listed-items" :data="item" :active="arr"/>
                 </div>
             </div>
+        </div>
+        <div id="weather-side">
+            <div id="date"></div>
+            <div id="city"></div>
+            <div id="temp"></div>
+            <div id="stats"></div>
+            <div id="time"></div>
         </div>
     </div>
 </template>
@@ -51,7 +58,16 @@ export default {
     methods:{
         async fetchWeather() {
             const elems = await this.$axios.$get('http://api.openweathermap.org/data/2.5/weather?q=Ulaanbaatar&APPID=454e0e864b03e71b886b41d8103e6faf');
-            console.log(elems);
+            var date = new Date();
+            var days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+            document.getElementById("date").innerHTML = days[date.getDay()] + " " + (date.getMonth() + 1) + "/" + date.getDate();
+            document.getElementById("city").innerHTML = elems.name;
+            document.getElementById("temp").innerHTML = Math.round(elems.main.temp - 273) + "°";
+            document.getElementById("stats").innerHTML = elems.weather[0].description[0].toUpperCase() + elems.weather[0].description.slice(1);
+            document.getElementById("time").innerHTML = date.getHours() + ":" + date.getMinutes();
+            setTimeout(() => {
+                this.fetchWeather();
+            }, 60000);
         },
         test() {
             document.getElementsByClassName("status-box")[1].innerHTML = "Canceled";
@@ -108,5 +124,35 @@ body {
 }
 .canceled {
     opacity: 0.4;
+}
+#weather-side {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 25%;
+    height: fit-content;
+    position: absolute;
+    top: 150px;
+    margin-top: 80px;
+    box-shadow: 0px -1px 5px 0.1px rgba(0, 0, 0, 0.2);
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Hind Siliguri', sans-serif;
+    font-weight: bold;
+    margin-left: 10px;
+}
+#city {
+    font-size: 13px;
+    margin-top: 80px;
+}
+#temp {
+    font-size: 60px;
+    margin-top: -10px;
+}
+#stats {
+    margin-top: -15px;
+    font-size: 13px;
+    margin-bottom: 80px;
 }
 </style>
