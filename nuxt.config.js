@@ -33,6 +33,7 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/tailwindcss
     '@nuxtjs/tailwindcss',
+    '@nuxtjs/vuetify',
   ],
 
   // Modules (https://go.nuxtjs.dev/config-modules)
@@ -53,9 +54,15 @@ export default {
               measurementId: "G-BVM431HT8Z"
           },
           services: {
-              auth: true,
+              auth: {
+                    persistence: 'local', // default
+                    initialize: {
+                        onAuthStateChangedAction: 'onAuthStateChanged',
+                    },
+              },
               database: true,
               functions: true,
+              storage: true,
           }
         }
     ],
