@@ -4,6 +4,9 @@
     max-width="344"
     elevation="2"
   >
+    <RepairDialog 
+      :dialog="dialogData"
+    />
     <v-list-item two-line>
       <v-list-item-avatar
         size="80"
@@ -54,7 +57,7 @@
         outlined
         rounded
         text
-        color="error"
+        color="warning"
       >
         <v-icon left>
           mdi-alarm
@@ -66,11 +69,24 @@
         rounded
         text
         color="success"
+        @click="edit"
       >
         <v-icon left>
           mdi-pencil
         </v-icon>
         Засах
+      </v-btn>
+      <v-btn
+        outlined
+        rounded
+        text
+        x-small
+        color="error"
+      >
+        <v-icon left>
+          mdi-delete
+        </v-icon>
+        Устгах
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -82,15 +98,13 @@ import { mapState, mapGetters } from 'vuex'
       repair: {
         default: () => {},
         type: Object,
-      }
+      },
     },
-    data () {
-      return {
-        interval: {},
+    data: () => ({
         value: 0,
         color: 'primary',
-      }
-    },
+        dialogData: {},
+    }),
     computed: {
       ...mapState({
         authUser: (state) => state.authUser,
@@ -112,9 +126,13 @@ import { mapState, mapGetters } from 'vuex'
           this.color = 'red'
       }, 
     },
-    beforeUnmount () {
-    },
-    mounted () {
+    methods: {
+      edit () {
+        this.dialogData = {
+          show: true,
+          repair: this.repair,
+        }
+      },
     },
   }
 </script>
