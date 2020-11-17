@@ -65,7 +65,8 @@
                         label="Е-мэйл"
                         ref="email"
                         :rules="emailrules"
-                      />
+                      >
+                      </v-text-field>
                     </v-col>
                     <v-col
                       cols="12"
@@ -222,6 +223,7 @@ export default {
     layout: 'dashboard',
     middleware: ['authenticated', 'authorized'],
     data: () => ({
+      tempmail: '',
       namerules: [
             value => !!value || 'Хоосон байх боломжгүй.',
             value => (value && value.length <= 10) || 'Дээд тал 10 тэмдэгт орсон.',
@@ -291,7 +293,7 @@ export default {
         role: '',
         photoURL: null,
         phoneNumber: '',
-        password: '',
+        // password: '',
         url: '',
         uid: '',
       },
@@ -320,11 +322,6 @@ export default {
           password: this.editedItem.password
         }
       },
-      pWform() {
-        return {
-          password: this.editedItem.password
-        }
-      }
     },
 
     watch: {
@@ -359,6 +356,7 @@ export default {
         this.editedIndex = this.users.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
+        this.tempmail = item.email;
       },
 
       deleteItem (item) {
@@ -427,8 +425,9 @@ export default {
       },
       emailchecker () {
         let finalResult = true;
-        const ref = this.$fire.database.ref('users');
         const Email = this.editedItem.email
+        const ref = this.$fire.database.ref('users');
+        if(this.editedIndex === -1) {
         ref.on('value', (snap) => {
           snap.forEach((snapCh) => {
             if(Email == snapCh.val().email) {
@@ -436,6 +435,19 @@ export default {
             }
           })
         })
+        }
+        else {
+          ref.on('value', (snap) => {
+            snap.forEach((snapCh) => {
+              if(Email == snapCh.val().email) {
+                finalResult = false;
+              }
+            })
+          })
+          if(Email == this.tempmail) {
+            finalResult = true
+          }
+        }
         if(Email.length <= 6) {
           finalResult = false;
         }
