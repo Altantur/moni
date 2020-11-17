@@ -29,7 +29,7 @@
         :width="25"
         :value="repair.value"
         :color="color"
-        class="text-4xl"
+        class="text-4xl select-none"
       >
         {{ repair.text }}
       </v-progress-circular>
