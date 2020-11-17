@@ -38,7 +38,7 @@
                 <span class="headline">{{ formTitle }}</span>
               </v-card-title>
 
-              <v-card-text>
+              <v-card-text class="ofHidden">
                 <v-container>
                   <v-row>
                     <v-col
@@ -49,6 +49,7 @@
                       <v-text-field
                         v-model="editedItem.displayName"
                         label="Нэр"
+                        :rules="namerules"
                       />
                     </v-col>
                     <v-col
@@ -59,6 +60,7 @@
                       <v-text-field
                         v-model="editedItem.email"
                         label="Е-мэйл"
+                        :rules="emailrules"
                       />
                     </v-col>
                     <v-col
@@ -69,6 +71,9 @@
                       <v-text-field
                         v-model="editedItem.phoneNumber"
                         label="Утас(976)"
+                        :rules="phoneNumrules"
+                        type="number"
+                        class="noButtons"
                       />
                     </v-col>
                     <v-col
@@ -76,10 +81,11 @@
                       sm="6"
                       md="4"
                     >
-                      <v-combobox
+                      <v-select
                         v-model="editedItem.role"
                         :items="roles"
                         label="Хэрэглэгчийн төрөл"
+                        :rules="rolerules"
                       />
                     </v-col>
                     <v-col
@@ -118,6 +124,7 @@
                         v-model="editedItem.password"
                         type="password"
                         label="Нууц үг"
+                        :rules="passwordrules"
                       />
                     </v-col>
                   </v-row>
@@ -175,7 +182,7 @@
       </template>
       <template #[`item.url`]="{ item }">
         <v-img
-          class="mx-2"
+          class="mx-2 bRadius"
           :src="item.url ? item.url : '/default_user.png'"
           max-height="40"
           max-width="40"
@@ -207,6 +214,25 @@ export default {
     layout: 'dashboard',
     middleware: ['authenticated', 'authorized'],
     data: () => ({
+      namerules: [
+            value => !!value || 'Хоосон байх боломжгүй.',
+            value => (value && value.length >= 3) || 'Доод тал 3 тэмдэгт орсон.'
+      ],
+      emailrules: [
+            value => !!value || 'Хоосон байх боломжгүй.',
+            value => (value && value.length >= 6) || 'Доод тал 6 тэмдэгт орсон.',
+            value => !value || /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) || 'Е-мэйл хаяг оруулна уу.'
+         ],
+      phoneNumrules: [
+            value => !!value || 'Хоосон байх боломжгүй.',
+            value => (value && value.length == 8) || '8 тэмдэгт шаардлагатай.'
+      ],
+      rolerules: [
+            value => !!value || 'Хоосон байх боломжгүй.'
+      ],
+      passwordrules: [
+            value => (value && value.length >= 8) || 'Доод тал нь 8 тэмдэгт орсон.'
+      ],
       dialog: false,
       loading: true,
       dialogDelete: false,
@@ -362,8 +388,17 @@ export default {
         }
         this.close()
       },
-
+      passwordchecker () {
+        if(this.editedItem.password === undefined) {
+          return true;
+        }
+        if(this.editedItem.password.length >= 8) {
+          return true
+        }
+        return false
+      },
       save () {
+        if(this.editedItem.displayName.length >= 3 && this.editedItem.role.length >= 1 && this.editedItem.phoneNumber.length == 8 && this.passwordchecker() && this.editedItem.email.length >= 6) {
         this.loading = true;
         if (this.editedItem.photoURL) {
           const ref = this.$fire.storage.ref().child(this.editedItem.email + '/' + this.editedItem.photoURL.name)
@@ -378,6 +413,7 @@ export default {
         } else {
           this.saveToDB(null);
         }
+        }
       },
       onFileChange() {
         const file = this.editedItem.photoURL
@@ -388,4 +424,15 @@ export default {
 </script>
 
 <style>
+
+.noButtons input::-webkit-outer-spin-button, 
+.noButtons input::-webkit-inner-spin-button{
+  -webkit-appearance: none;
+}
+.ofHidden {
+  overflow: hidden;
+}
+.bRadius {
+  border-radius: 50%;
+}
 </style>
