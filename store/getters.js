@@ -12,5 +12,19 @@ export default {
           } catch {
             return false
         }
+    },
+    operators: (state) => {
+        try {
+            return state.users
+          } catch {
+            return []
+        }
+    },
+    repairmen: (state) => {
+        try {
+            return state.users
+          } catch {
+            return []
+        }
     }
 }
