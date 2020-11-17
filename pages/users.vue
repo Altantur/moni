@@ -420,13 +420,29 @@ export default {
         if(this.editedItem.password === undefined) {
           return true;
         }
-        if(this.editedItem.password.length >= 8) {
+        if(this.editedItem.password.length >= 6) {
           return true
         }
         return false
       },
+      emailchecker () {
+        let finalResult = true;
+        const ref = this.$fire.database.ref('users');
+        const Email = this.editedItem.email
+        ref.on('value', (snap) => {
+          snap.forEach((snapCh) => {
+            if(Email == snapCh.val().email) {
+              finalResult = false;
+            }
+          })
+        })
+        if(Email.length <= 6) {
+          finalResult = false;
+        }
+        return finalResult
+      },
       save () {
-        if(this.editedItem.displayName.length >= 3 && this.editedItem.role.length >= 1 && this.editedItem.phoneNumber.length == 8 && this.passwordchecker() && this.editedItem.email.length >= 6) {
+        if(this.editedItem.displayName.length >= 3 && this.editedItem.role.length >= 1 && this.editedItem.phoneNumber.length == 8 && this.passwordchecker() && this.emailchecker()) {
         this.loading = true;
         if (this.editedItem.photoURL) {
           const ref = this.$fire.storage.ref().child(this.editedItem.email + '/' + this.editedItem.photoURL.name)
