@@ -98,19 +98,10 @@
                 sm="6"
                 md="4"
               >
-                <v-text-field
-                  v-model="editedItem.email"
-                  label="Е-мэйл"
-                />
-              </v-col>
-              <v-col
-                cols="12"
-                sm="6"
-                md="4"
-              >
-                <v-text-field
-                  v-model="editedItem.phoneNumber"
-                  label="Утас(976)"
+                <v-combobox
+                  v-model="editedItem.role"
+                  :items="zausers"
+                  label="Засварын ажилтан"
                 />
               </v-col>
               <v-col
@@ -120,46 +111,8 @@
               >
                 <v-combobox
                   v-model="editedItem.role"
-                  :items="roles"
-                  label="Хэрэглэгчийн төрөл"
-                />
-              </v-col>
-              <v-col
-                cols="12"
-                sm="6"
-                md="4"
-              >
-                <v-img
-                  class="mx-2"
-                  :src="editedItem.url ? editedItem.url : '/default_user.png'"
-                  max-height="200"
-                  max-width="100"
-                  contain
-                />
-              </v-col>
-              <v-col
-                cols="12"
-                sm="6"
-                md="4"
-              >
-                <v-file-input
-                  v-model="editedItem.photoURL"
-                  accept="image/*"
-                  truncate-length="15"
-                  label="Зураг оруулах"
-                  prepend-icon="mdi-account"
-                  @change="onFileChange"
-                />
-              </v-col>
-              <v-col
-                cols="12"
-                sm="6"
-                md="4"
-              >
-                <v-text-field
-                  v-model="editedItem.password"
-                  type="password"
-                  label="Нууц үг"
+                  :items="uzusers"
+                  label="Үйлчилгээний зөвлөх"
                 />
               </v-col>
             </v-row>
@@ -205,6 +158,8 @@ export default {
       loading: true,
       dialogDelete: false,
       editedIndex: -1,
+      uzusers: [],//Үйлчилгээний зөвлөх
+      zausers: [],//Засварын ажилтан
       editedItem: {
         vecNumber: '',
         duration: '',
@@ -224,7 +179,7 @@ export default {
         isLoggedIn: 'isLoggedIn',
       }),
       formTitle () {
-        return this.editedIndex === -1 ? 'Шинэ ажилтан нэмэх' : 'Засах'
+        return this.editedIndex === -1 ? 'Захиалга нэмэх' : 'Засах'
       },
     },
     watch: {
@@ -242,7 +197,7 @@ export default {
     },
     methods: {
       create () {
-        alert()
+        this.dialog = true
       },
       editItem (item) {
         this.editedIndex = this.users.indexOf(item)
@@ -320,10 +275,6 @@ export default {
         } else {
           this.saveToDB(null);
         }
-      },
-      onFileChange() {
-        const file = this.editedItem.photoURL
-        this.editedItem.url = URL.createObjectURL(file)
       },
       async writeToRealtimeDb() {
           const messageRef = this.$fire.database.ref('message')
