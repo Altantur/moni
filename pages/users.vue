@@ -33,12 +33,14 @@
                 Шинэ ажилтан нэмэх
               </v-btn>
             </template>
-            <v-card>
+            <v-card
+            ref="form">
               <v-card-title>
                 <span class="headline">{{ formTitle }}</span>
               </v-card-title>
 
-              <v-card-text class="ofHidden">
+              <v-card-text
+              class="ofHidden">
                 <v-container>
                   <v-row>
                     <v-col
@@ -49,6 +51,7 @@
                       <v-text-field
                         v-model="editedItem.displayName"
                         label="Нэр"
+                        ref="name"
                         :rules="namerules"
                       />
                     </v-col>
@@ -60,6 +63,7 @@
                       <v-text-field
                         v-model="editedItem.email"
                         label="Е-мэйл"
+                        ref="email"
                         :rules="emailrules"
                       />
                     </v-col>
@@ -74,6 +78,8 @@
                         :rules="phoneNumrules"
                         type="number"
                         class="noButtons"
+                        counter="8"
+                        ref="phoneNum"
                       />
                     </v-col>
                     <v-col
@@ -86,6 +92,7 @@
                         :items="roles"
                         label="Хэрэглэгчийн төрөл"
                         :rules="rolerules"
+                        ref="roles"
                       />
                     </v-col>
                     <v-col
@@ -125,6 +132,7 @@
                         type="password"
                         label="Нууц үг"
                         :rules="passwordrules"
+                        ref="password"
                       />
                     </v-col>
                   </v-row>
@@ -216,16 +224,17 @@ export default {
     data: () => ({
       namerules: [
             value => !!value || 'Хоосон байх боломжгүй.',
+            value => (value && value.length <= 10) || 'Дээд тал 10 тэмдэгт орсон.',
             value => (value && value.length >= 3) || 'Доод тал 3 тэмдэгт орсон.'
       ],
       emailrules: [
             value => !!value || 'Хоосон байх боломжгүй.',
             value => (value && value.length >= 6) || 'Доод тал 6 тэмдэгт орсон.',
-            value => !value || /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) || 'Е-мэйл хаяг оруулна уу.'
+            value => !value || /.+@.+\..+/.test(value) || 'Е-мэйл хаяг оруулна уу.'
          ],
       phoneNumrules: [
             value => !!value || 'Хоосон байх боломжгүй.',
-            value => (value && value.length == 8) || '8 тэмдэгт шаардлагатай.'
+            value => (value && value.length <= 8) || '8 тэмдэгт шаардлагатай.'
       ],
       rolerules: [
             value => !!value || 'Хоосон байх боломжгүй.'
@@ -302,6 +311,20 @@ export default {
       formTitle () {
         return this.editedIndex === -1 ? 'Шинэ ажилтан нэмэх' : 'Засах'
       },
+      form() {
+        return {
+          name: this.editedItem.displayName,
+          email: this.editedItem.email,
+          phoneNum: this.editedItem.phoneNumber,
+          roles: this.editedItem.role,
+          password: this.editedItem.password
+        }
+      },
+      pWform() {
+        return {
+          password: this.editedItem.password
+        }
+      }
     },
 
     watch: {
@@ -327,11 +350,14 @@ export default {
           this.loading = false
         });
       },
-
+      resForm() {
+        Object.keys(this.form).forEach(f => {
+          this.$refs[f].resetValidation();
+        })
+      },
       editItem (item) {
         this.editedIndex = this.users.indexOf(item)
         this.editedItem = Object.assign({}, item)
-        console.log(item);
         this.dialog = true
       },
 
@@ -354,9 +380,9 @@ export default {
         });
         this.closeDelete()
       },
-
       close () {
         this.dialog = false
+        this.resForm()
         this.$nextTick(() => {
           this.editedItem = Object.assign({}, this.defaultItem)
           this.editedIndex = -1
@@ -365,9 +391,11 @@ export default {
 
       closeDelete () {
         this.dialogDelete = false
+        this.resForm()
         this.$nextTick(() => {
           this.editedItem = Object.assign({}, this.defaultItem)
           this.editedIndex = -1
+          
         })
       },
 
