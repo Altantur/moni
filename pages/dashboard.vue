@@ -50,10 +50,11 @@
 
       <v-tab-item class="flex flex-wrap pb-20">
         <Item 
-          v-for="index in 8" 
+          v-for="index in 10" 
           :key="index" 
           class="m-4"
           :repair="repair"
+          :index="index"
         />
       </v-tab-item>
       <v-tab-item>

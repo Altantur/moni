@@ -15,14 +15,14 @@ export default {
     },
     operators: (state) => {
         try {
-            return state.users
+            return state.users.filter( user => user.role == "Үйлчилгээний зөвлөх")
           } catch {
             return []
         }
     },
     repairmen: (state) => {
         try {
-            return state.users
+            return state.users.filter( user => user.role == "Засварчин")
           } catch {
             return []
         }
