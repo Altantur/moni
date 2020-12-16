@@ -27,8 +27,8 @@
               md="4"
             >
               <v-combobox
-                v-model="editedItem.role"
-                :items="zausers"
+                v-model="editedItem.zauser"
+                :items="z_users()"
                 label="Засварын ажилтан"
               />
             </v-col>
@@ -38,8 +38,8 @@
               md="4"
             >
               <v-combobox
-                v-model="editedItem.role"
-                :items="uzusers"
+                v-model="editedItem.uzuser"
+                :items="u_users()"
                 label="Үйлчилгээний зөвлөх"
               />
             </v-col>
@@ -70,7 +70,6 @@
 
 <script>
 import { mapState, mapGetters } from 'vuex'
-import _ from 'lodash'
 export default {
     middleware: 'authenticated',
     props: {
@@ -86,11 +85,15 @@ export default {
         veNumber: '',
         duration: '',
         comment: '',
+        zauser: '',
+        uzuser: '',
       },
       defaultItem: {
         veNumber: '',
         duration: '',
         comment: '',
+        zauser: '',
+        uzuser: '',
       },
     }),
     computed: {
@@ -117,6 +120,22 @@ export default {
     methods: {
       close () {
         this.open = false
+      },
+      u_users () { // Үйлчилгээний зөвлөх
+        return this.uzusers.map(user => { 
+          return { 
+            text: user.displayName,
+            value: user.email,
+          } 
+        })
+      },
+      z_users () { // Үйлчилгээний зөвлөх
+        return this.zausers.map(user => { 
+          return { 
+            text: user.displayName,
+            value: user.email,
+          } 
+        })
       },
       saveToDB (url) {
         if (url) this.editedItem.url = url

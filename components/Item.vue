@@ -30,11 +30,11 @@
         :rotate="-90"
         :size="200"
         :width="25"
-        :value="repair.value"
+        :value="index * 10"
         :color="color"
         class="text-4xl select-none"
       >
-        {{ repair.text }}
+        {{ text() }}
       </v-progress-circular>
     </v-list-item>
     <v-btn 
@@ -99,6 +99,10 @@ import { mapState, mapGetters } from 'vuex'
         default: () => {},
         type: Object,
       },
+      index: {
+        default: () => 0,
+        type: Number,
+      }
     },
     data: () => ({
         value: 0,
@@ -127,6 +131,11 @@ import { mapState, mapGetters } from 'vuex'
       }, 
     },
     methods: {
+      text () {
+        const tmp = this.index * 10
+        this.value = tmp
+        return Math.floor(tmp / 60) + ":"  + tmp % 60 + ":" + 12
+      },
       edit () {
         this.dialogData = {
           show: true,
